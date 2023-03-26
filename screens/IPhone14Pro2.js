@@ -29,9 +29,6 @@ import appleAuth, {
   AppleAuthRequestOperation,
   AppleAuthRequestScope,
 } from '@invertase/react-native-apple-authentication';
-import { navigate } from "@react-navigation/routers/lib/typescript/src/CommonActions";
-// import axios from 'axios';
-// import authConfig from '../googleAuth.json'
 
 GoogleSignin.configure({
   webClientId:
@@ -39,10 +36,20 @@ GoogleSignin.configure({
   offlineAccess: true,
   androidClientId:"1:402220314576:android:a5dec03b4b2969253353d5"
   });
+
 const IPhone14Pro2 = () => {
 
   const navigation = useNavigation();
-
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is already logged in, navigate to main screen
+        navigation.navigate("IPhone14Pro5");
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
+  
   //GOOGLE Sign in
   const [userInfo, setUserInfo] = useState(null); 
   
@@ -76,8 +83,12 @@ const IPhone14Pro2 = () => {
       }
     }
     if (isLoginSuccessful) {
-      navigation.navigate("IPhone14Pro5");
+      navigation.navigate("IPhone14Pro5", { onContinue: handleContinue });
     }
+  };
+  const handleContinue = () => {
+    onContinue();
+    navigation.navigate("IPhone14Pro5");
   };
 
   

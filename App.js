@@ -1,40 +1,40 @@
 
 import React,{useEffect} from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { useFonts } from "expo-font";
+// import { useFonts } from "expo-font";
 import IPhone14Pro2 from "./screens/IPhone14Pro2";
 import IPhone14Pro1 from "./screens/IPhone14Pro1";
 import IPhone14Pro14 from "./screens/IPhone14Pro14";
 import IPhone14Pro13 from "./screens/IPhone14Pro13";
 // import IPhone14Pro4 from "./screens/IPhone14Pro4";
 import IPhone14Pro6 from "./screens/IPhone14Pro6";
-import IPhone14Pro15 from "./screens/IPhone14Pro15";
+import IPhone14Pro15 from "./screens/Camera";
 import IPhone14Pro7 from "./screens/IPhone14Pro7";
 import IPhone14Pro5 from "./screens/IPhone14Pro5";
 import IPhone14Pro10 from "./screens/IPhone14Pro10";
 import IPhone14Pro9 from "./screens/IPhone14Pro9";
 import IPhone14Pro41 from "./screens/IPhone14Pro41";
 //import { AppearanceProvider } from 'expo-system-ui';
-
+import { getFontFamily } from "./fonts";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // import { View, Text, Pressable, TouchableOpacity } from "react-native";
 
 const App = () => {
   const Stack = createNativeStackNavigator();
   const [hideSplashScreen, setHideSplashScreen] = React.useState(false);
-  const [fontsLoaded, error] = useFonts({
-    Inter: require("./assets/fonts/Inter.ttf"),
-    Inter_thin: require("./assets/fonts/Inter_thin.ttf"),
-    Inter_regular: require("./assets/fonts/Inter_regular.ttf"),
-    Inter_medium: require("./assets/fonts/Inter_medium.ttf"),
-    Inter_semibold: require("./assets/fonts/Inter_semibold.ttf"),
-    "DM Sans": require("./assets/fonts/DM_Sans.ttf"),
-    "DM Sans_regular": require("./assets/fonts/DM_Sans_regular.ttf"),
-    "DM Sans_medium": require("./assets/fonts/DM_Sans_medium.ttf"),
-    "DM Sans_bold": require("./assets/fonts/DM_Sans_bold.ttf"),
-    Georama: require("./assets/fonts/Georama.ttf"),
-    Georama_extrabold: require("./assets/fonts/Georama_extrabold.ttf"),
-  });
+  // const [fontsLoaded, error] = useFonts({
+  //   Inter: require("./assets/fonts/Inter.ttf"),
+  //   Inter_thin: require("./assets/fonts/Inter_thin.ttf"),
+  //   Inter_regular: require("./assets/fonts/Inter_regular.ttf"),
+  //   Inter_medium: require("./assets/fonts/Inter_medium.ttf"),
+  //   Inter_semibold: require("./assets/fonts/Inter_semibold.ttf"),
+  //   "DM Sans": require("./assets/fonts/DM_Sans.ttf"),
+  //   "DM Sans_regular": require("./assets/fonts/DM_Sans_regular.ttf"),
+  //   "DM Sans_medium": require("./assets/fonts/DM_Sans_medium.ttf"),
+  //   "DM Sans_bold": require("./assets/fonts/DM_Sans_bold.ttf"),
+  //   Georama: require("./assets/fonts/Georama.ttf"),
+  //   Georama_extrabold: require("./assets/fonts/Georama_extrabold.ttf"),
+  // });
 
   useEffect(() => {
     setTimeout(() => {
@@ -42,7 +42,7 @@ const App = () => {
     }, 2000);
   }, []);
 
-  if (!fontsLoaded && !error) {
+  if (!getFontFamily && !error) {
     return null;
   }
 

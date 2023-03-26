@@ -1,30 +1,125 @@
-import * as React from "react";
-import { Image, StyleSheet, StatusBar, View, Pressable } from "react-native";
+import React, {useState, useRef,useEffect} from "react";
+import { Image, StyleSheet, StatusBar,PermissionsAndroid, View, Pressable,TouchableOpacity, Text, Platform ,BackHandler} from "react-native";
+import {CameraRoll} from "@react-native-camera-roll/camera-roll";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, Padding } from "../GlobalStyles";
+import { RNCamera as Camera } from 'react-native-camera';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faBoltLightning } from '@fortawesome/free-solid-svg-icons';
+import { launchCamera } from 'react-native-image-picker';
 
 const IPhone14Pro15 = () => {
   const navigation = useNavigation();
+  const cameraRef = useRef(null);
+  const [flash, setFlash] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
+
+//Handle permession and take pic
+  async function hasAndroidPermission() {
+    const permission =
+      Platform.Version >= 33
+        ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+        : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }
+
+  async function savePicture() {
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      return;
+    }
+
+    const options = { quality: 0.5, base64: true };
+    //take pic and save pic
+    const data = await cameraRef.current.takePictureAsync(options);
+    //view the pic immediately after take them
+    const savedImageUri = await CameraRoll.save(data.uri, { type: 'photo', album: 'Test Album' });
+    setImageUri({ uri: savedImageUri });
+  }
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (imageUri) {
+        setImageUri(null);
+        return true;
+      }
+      return false;
+    });
+    return () => backHandler.remove();
+  }, [imageUri]);
+
+  const handleBackPress = () => {
+    if (imageUri) {
+      setImageUri(null);
+      return true;
+    }
+    return false;
+  };
+  if (imageUri) {
+    return (
+      <View>
+        <Image
+          source={imageUri}
+          style={{ width: "100%", height:"100%" }}
+        />
+        <Button title="Go back to camera" onPress={() => setImageUri(null)} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.iphone14Pro15}>
-      <Image
-        style={[styles.parkeringskylt1Icon, styles.iconLayout]}
-        resizeMode="cover"
-        source={require("../assets/parkeringskylt-1.png")}
+      <Camera
+        ref={cameraRef}
+        style={{ flex: 1 }}
+        type={Camera.Constants.Type.back}
+        flashMode={
+          flash
+            ? Camera.Constants.FlashMode.torch
+            : Camera.Constants.FlashMode.off
+        }
+        captureAudio={false}
       />
+      {/* {imageUri && (
+      <Image
+        source={imageUri}
+        style={{ width: "100%", height:"100%" }}
+      />
+    )} */}
+      {/* <TouchableOpacity onPress={savePicture}>
+          <Text>Take Picture</Text>
+        </TouchableOpacity> */}
       <StatusBar barStyle="default" />
       <View style={styles.homeindicator}>
         <View style={styles.homeIndicator} />
       </View>
       <Pressable style={[styles.backBtn, styles.backBtnPosition]}>
-        <View style={[styles.backBtnChild, styles.childShadowBox]} />
+      <TouchableOpacity  style={[styles.backBtnChild, styles.childShadowBox]}>
+      <TouchableOpacity onPress={() => setFlash(!flash)}>
+          <Text>{flash ? '' : ''}</Text>
+        </TouchableOpacity>
+          {/* <Image
+        style={[styles.flashOnIcon, styles.iconLayout]}
+        resizeMode="cover"
+        source={require("../assets/flash-on.png")}
+      /> */}
+       <FontAwesomeIcon icon={faBoltLightning} color="black" style={styles.flashOnIcon}/>
+      </TouchableOpacity>
+      {/* <FontAwesome name="star" size={60} color="red" /> */}
+        {/* <View style={[styles.backBtnChild, styles.childShadowBox]} /> */}
         <Pressable
           style={styles.rectangleParent}
           onPress={() => navigation.navigate("IPhone14Pro7")}
         >
           <Pressable style={[styles.groupChild, styles.childShadowBox]} />
           <Image
+          
             style={[styles.vectorIcon, styles.iconLayout]}
             resizeMode="cover"
             source={require("../assets/vector16.png")}
@@ -41,17 +136,17 @@ const IPhone14Pro15 = () => {
         source={require("../assets/ellipse-2.png")}
       />
       <View style={styles.nounScan23885591}>
+      <TouchableOpacity onPress={savePicture}>
         <Image
+        
           style={styles.vectorIcon1}
           resizeMode="cover"
           source={require("../assets/vector17.png")}
         />
+        </TouchableOpacity>
       </View>
-      <Image
-        style={[styles.flashOnIcon, styles.iconLayout]}
-        resizeMode="cover"
-        source={require("../assets/flash-on.png")}
-      />
+ 
+    
     </View>
   );
 };
@@ -175,12 +270,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   flashOnIcon: {
-    height: "2.93%",
-    width: "6.36%",
-    top: "90.61%",
+    top: "27.61%",
     right: "8.4%",
     bottom: "6.46%",
-    left: "85.24%",
+    left: "35.24%",
     position: "absolute",
   },
   iphone14Pro15: {
